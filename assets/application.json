@@ -1,7 +1,7 @@
 {
-  "app_id": 9000,
-  "title": "My Awesome E-Com Plus App",
-  "slug": "my-awesome-ecom-plus-app",
+  "app_id": 123113,
+  "title": "Webhooks",
+  "slug": "webhooks",
   "type": "external",
   "state": "active",
   "authentication": true,
@@ -16,9 +16,15 @@
     "products": [],
     "brands": [],
     "categories": [],
-    "customers": [],
-    "orders": [],
-    "carts": [],
+    "customers": [
+      "GET"
+    ],
+    "orders": [
+      "GET"
+    ],
+    "carts": [
+      "GET"
+    ],
     "orders/fulfillments": [],
     "orders/payments_history": [],
     "products/quantity": [],
@@ -26,6 +32,35 @@
     "products/price": [],
     "products/variations/price": []
   },
-  "auth_callback_uri": "https://us-central1-ecom-app-boilerplate.cloudfunctions.net/app/ecom/auth-callback",
+  "admin_settings": {
+    "webhook_uri": {
+      "schema": {
+        "type": "string",
+        "maxLength": 255,
+        "format": "uri",
+        "title": "Webhook URI",
+        "description": "URL de destino para os webhooks"
+      },
+      "hide": true
+    },
+    "webhook_token": {
+      "schema": {
+        "type": "string",
+        "maxLength": 50,
+        "title": "Token",
+        "description": "Bearer token opcional para o cabeçalho Authorization"
+      },
+      "hide": true
+    },
+    "skip_pending": {
+      "schema": {
+        "type": "boolean",
+        "default": false,
+        "title": "Ignorar pedidos pendentes"
+      },
+      "hide": true
+    }
+  },
+  "auth_callback_uri": "https://us-central1-ecom-webhooks.cloudfunctions.net/app/ecom/auth-callback",
   "version": "1.0.0"
 }

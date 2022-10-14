@@ -7,8 +7,8 @@
 
 const app = {
   app_id: 123113,
-  title: 'My Awesome E-Com Plus App',
-  slug: 'my-awesome-app',
+  title: 'Webhooks',
+  slug: 'webhooks',
   type: 'external',
   state: 'active',
   authentication: true,
@@ -75,21 +75,21 @@ const app = {
       // 'DELETE',        // Delete categories
     ],
     customers: [
-      // 'GET',           // List/read customers
+      'GET',           // List/read customers
       // 'POST',          // Create customers
       // 'PATCH',         // Edit customers
       // 'PUT',           // Overwrite customers
       // 'DELETE',        // Delete customers
     ],
     orders: [
-      // 'GET',           // List/read orders with public and private fields
+      'GET',           // List/read orders with public and private fields
       // 'POST',          // Create orders
       // 'PATCH',         // Edit orders
       // 'PUT',           // Overwrite orders
       // 'DELETE',        // Delete orders
     ],
     carts: [
-      // 'GET',           // List all carts (no auth needed to read specific cart only)
+      'GET',           // List all carts (no auth needed to read specific cart only)
       // 'POST',          // Create carts
       // 'PATCH',         // Edit carts
       // 'PUT',           // Overwrite carts
@@ -138,37 +138,33 @@ const app = {
   },
 
   admin_settings: {
-    /**
-     * JSON schema based fields to be configured by merchant and saved to app `data` / `hidden_data`, such as:
-
      webhook_uri: {
        schema: {
          type: 'string',
          maxLength: 255,
          format: 'uri',
-         title: 'Notifications URI',
-         description: 'Unique notifications URI available on your Custom App dashboard'
+         title: 'Webhook URI',
+         description: 'URL de destino para os webhooks',
        },
        hide: true
      },
-     token: {
+     webhook_token: {
        schema: {
          type: 'string',
          maxLength: 50,
-         title: 'App token'
+         title: 'Token',
+         description: 'Bearer token opcional para o cabeçalho Authorization',
        },
        hide: true
      },
-     opt_in: {
+     skip_pending: {
        schema: {
          type: 'boolean',
          default: false,
-         title: 'Some config option'
+         title: 'Ignorar pedidos pendentes',
        },
-       hide: false
+       hide: true
      },
-
-     */
   }
 }
 
@@ -181,6 +177,7 @@ const procedures = []
 
 /**
  * Uncomment and edit code above to configure `triggers` and receive respective `webhooks`:
+ */
 
 const { baseUri } = require('./__env')
 
@@ -188,11 +185,12 @@ procedures.push({
   title: app.title,
 
   triggers: [
-    // Receive notifications when new order is created:
+    /* Receive notifications when new order is created:
     {
       resource: 'orders',
       action: 'create',
     },
+    */
 
     // Receive notifications when order financial/fulfillment status are set or changed:
     // Obs.: you probably SHOULD NOT enable the orders triggers below and the one above (create) together.
@@ -205,7 +203,7 @@ procedures.push({
       field: 'fulfillment_status',
     },
 
-    // Receive notifications when products/variations stock quantity changes:
+    /* Receive notifications when products/variations stock quantity changes:
     {
       resource: 'products',
       field: 'quantity',
@@ -229,6 +227,7 @@ procedures.push({
     },
 
     // Feel free to create custom combinations with any Store API resource, subresource, action and field.
+    */
   ],
 
   webhooks: [
@@ -242,9 +241,6 @@ procedures.push({
     }
   ]
 })
-
- * You may also edit `routes/ecom/webhook.js` to treat notifications properly.
- */
 
 exports.app = app
 

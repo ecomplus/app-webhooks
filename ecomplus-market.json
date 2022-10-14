@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "",
-    "short_description": "",
+    "title": "Webhooks",
+    "short_description": "Webhooks configuráveis para novos pedidos e atualizações de status",
     "category": "tools"
   }
 }

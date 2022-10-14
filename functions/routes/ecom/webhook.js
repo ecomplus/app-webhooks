@@ -1,3 +1,5 @@
+const axios = require('axios')
+
 // read configured E-Com Plus app data
 const getAppData = require('./../../lib/store-api/get-app-data')
 
@@ -31,21 +33,68 @@ exports.post = ({ appSdk }, req, res) => {
       }
 
       /* DO YOUR CUSTOM STUFF HERE */
-
-      // all done
-      res.send(ECHO_SUCCESS)
+      const { resource } = trigger
+      if (resource === 'orders' && trigger.action !== 'delete') {
+        const resourceId = trigger.resource_id || trigger.inserted_id
+        const url = appData.webhook_uri
+        if (resourceId && url) {
+          console.log(`Trigger for Store #${storeId} ${resourceId} => ${url}`)
+          return appSdk.apiRequest(storeId, `${resource}/${resourceId}.json`)
+            .then(async ({ response }) => {
+              const order = response.data
+              if (
+                appData.skip_pending === true &&
+                (!order.financial_status || order.financial_status.current === 'pending')
+              ) {
+                return res.sendStatus(204)
+              }
+              console.log(`> Sending ${resource} notification`)
+              const token = appData.webhook_token
+              let headers
+              if (token) {
+                headers = {
+                  'Authorization': `Bearer ${token}`
+                }
+              }
+              return axios({
+                method: 'post',
+                url,
+                headers,
+                data: {
+                  storeId,
+                  trigger,
+                  order,
+                }
+              })
+          })
+          .then(({ status }) => console.log(`> ${status}`))
+          .catch(error => {
+            if (error.response && error.config) {
+              const err = new Error(`#${storeId} ${resourceId} POST to ${url} failed`)
+              const { status, data } = error.response
+              err.response = {
+                status,
+                data: JSON.stringify(data)
+              }
+              err.data = JSON.stringify(error.config.data)
+              return console.error(err)
+            }
+            console.error(error)
+          })
+          .finally(() => {
+            if (!res.headersSent) {
+              return res.sendStatus(200)
+            }
+          })
+        }
+      }
+      res.sendStatus(204)
     })
 
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
         // trigger ignored by app configuration
         res.send(ECHO_SKIP)
-      } else if (err.appWithoutAuth === true) {
-        const msg = `Webhook for ${storeId} unhandled with no authentication found`
-        const error = new Error(msg)
-        error.trigger = JSON.stringify(trigger)
-        console.error(error)
-        res.status(412).send(msg)
       } else {
         // console.error(err)
         // request to Store API with error response

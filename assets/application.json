@@ -33,34 +33,44 @@
     "products/variations/price": []
   },
   "admin_settings": {
-    "webhook_uri": {
+    "webhooks": {
       "schema": {
-        "type": "string",
-        "maxLength": 255,
-        "format": "uri",
-        "title": "Webhook URI",
-        "description": "URL de destino para os webhooks"
-      },
-      "hide": true
-    },
-    "webhook_token": {
-      "schema": {
-        "type": "string",
-        "maxLength": 50,
-        "title": "Token",
-        "description": "Bearer token opcional para o cabeçalho Authorization"
-      },
-      "hide": true
-    },
-    "skip_pending": {
-      "schema": {
-        "type": "boolean",
-        "default": false,
-        "title": "Ignorar pedidos pendentes"
+        "title": "Webhooks",
+        "type": "array",
+        "maxItems": 300,
+        "items": {
+          "webhook_uri": {
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "format": "uri",
+              "title": "Webhook URI",
+              "description": "URL de destino para os webhooks"
+            },
+            "hide": true
+          },
+          "webhook_token": {
+            "schema": {
+              "type": "string",
+              "maxLength": 50,
+              "title": "Token",
+              "description": "Bearer token opcional para o cabeçalho Authorization"
+            },
+            "hide": true
+          },
+          "skip_pending": {
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Ignorar pedidos pendentes"
+            },
+            "hide": true
+          }
+        }
       },
       "hide": true
     }
   },
   "auth_callback_uri": "https://us-central1-ecom-webhooks.cloudfunctions.net/app/ecom/auth-callback",
-  "version": "1.0.0"
+  "version": "1.1.0"
 }

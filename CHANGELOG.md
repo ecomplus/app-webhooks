@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/ecomplus/application-starter/compare/v1.0.0...v1.1.0) (2022-11-28)
+
+
+### Features
+
+* supporting multiple configured webhooks ([6aabf33](https://github.com/ecomplus/application-starter/commit/6aabf33ecb39281edec60f6d9c559871482e9ec9))
+
+
+### Bug Fixes
+
+* **deps:** install @google-cloud/firestore again :confused: ([ffb6b9c](https://github.com/ecomplus/application-starter/commit/ffb6b9cae226b784e0d95e818bd46d25f7a92757))
+
 ## 1.0.0 (2022-10-14)
 
 

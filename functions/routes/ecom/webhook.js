@@ -36,52 +36,63 @@ exports.post = ({ appSdk }, req, res) => {
       const { resource } = trigger
       if (resource === 'orders' && trigger.action !== 'delete') {
         const resourceId = trigger.resource_id || trigger.inserted_id
-        const url = appData.webhook_uri
-        if (resourceId && url) {
-          console.log(`Trigger for Store #${storeId} ${resourceId} => ${url}`)
-          return appSdk.apiRequest(storeId, `${resource}/${resourceId}.json`)
-            .then(async ({ response }) => {
-              const order = response.data
-              if (
-                appData.skip_pending === true &&
-                (!order.financial_status || order.financial_status.current === 'pending')
-              ) {
-                return res.sendStatus(204)
-              }
-              console.log(`> Sending ${resource} notification`)
-              const token = appData.webhook_token
-              let headers
-              if (token) {
-                headers = {
-                  'Authorization': `Bearer ${token}`
-                }
-              }
-              return axios({
-                method: 'post',
-                url,
-                headers,
-                data: {
-                  storeId,
-                  trigger,
-                  order,
-                }
-              })
-          })
-          .then(({ status }) => console.log(`> ${status}`))
-          .catch(error => {
-            if (error.response && error.config) {
-              const err = new Error(`#${storeId} ${resourceId} POST to ${url} failed`)
-              const { status, data } = error.response
-              err.response = {
-                status,
-                data: JSON.stringify(data)
-              }
-              err.data = JSON.stringify(error.config.data)
-              return console.error(err)
+        if (resourceId) {
+          const webhooksPromises = []
+          const addWebhook = (options) => {
+            const url = options && options.webhook_uri
+            if (url) {
+              console.log(`Trigger for Store #${storeId} ${resourceId} => ${url}`)
+              webhooksPromises.push(
+                appSdk.apiRequest(storeId, `${resource}/${resourceId}.json`).then(async ({ response }) => {
+                  const order = response.data
+                  if (
+                    options.skip_pending === true &&
+                    (!order.financial_status || order.financial_status.current === 'pending')
+                  ) {
+                    return res.sendStatus(204)
+                  }
+                  console.log(`> Sending ${resource} notification`)
+                  const token = options.webhook_token
+                  let headers
+                  if (token) {
+                    headers = {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  }
+                  return axios({
+                    method: 'post',
+                    url,
+                    headers,
+                    data: {
+                      storeId,
+                      trigger,
+                      order,
+                    }
+                  })
+                })
+                .then(({ status }) => console.log(`> ${status}`))
+                .catch(error => {
+                  if (error.response && error.config) {
+                    const err = new Error(`#${storeId} ${resourceId} POST to ${url} failed`)
+                    const { status, data } = error.response
+                    err.response = {
+                      status,
+                      data: JSON.stringify(data)
+                    }
+                    err.data = JSON.stringify(error.config.data)
+                    return console.error(err)
+                  }
+                  console.error(error)
+                })
+              )
             }
-            console.error(error)
-          })
-          .finally(() => {
+          }
+          const { webhooks } = appData
+          if (Array.isArray(webhooks)) {
+            webhooks.forEach(addWebhook)
+          }
+          addWebhook(appData)
+          return Promise.all(webhooksPromises).then(() => {
             if (!res.headersSent) {
               return res.sendStatus(200)
             }

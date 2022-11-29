@@ -144,7 +144,7 @@ const app = {
         type: 'array',
         maxItems: 300,
         items: {
-          title: 'Opções do webhook',
+          title: 'Webhook',
           type: 'object',
           additionalProperties: false,
           properties: {

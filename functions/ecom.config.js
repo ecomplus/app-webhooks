@@ -144,32 +144,37 @@ const app = {
         type: 'array',
         maxItems: 300,
         items: {
-          webhook_uri: {
-            schema: {
-              type: 'string',
-              maxLength: 255,
-              format: 'uri',
-              title: 'Webhook URI',
-              description: 'URL de destino para os webhooks',
+          title: 'Opções do webhook',
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            webhook_uri: {
+              schema: {
+                type: 'string',
+                maxLength: 255,
+                format: 'uri',
+                title: 'Webhook URI',
+                description: 'URL de destino para os webhooks',
+              },
+              hide: true
             },
-            hide: true
-          },
-          webhook_token: {
-            schema: {
-              type: 'string',
-              maxLength: 50,
-              title: 'Token',
-              description: 'Bearer token opcional para o cabeçalho Authorization',
+            webhook_token: {
+              schema: {
+                type: 'string',
+                maxLength: 50,
+                title: 'Token',
+                description: 'Bearer token opcional para o cabeçalho Authorization',
+              },
+              hide: true
             },
-            hide: true
-          },
-          skip_pending: {
-            schema: {
-              type: 'boolean',
-              default: false,
-              title: 'Ignorar pedidos pendentes',
-            },
-            hide: true
+            skip_pending: {
+              schema: {
+                type: 'boolean',
+                default: false,
+                title: 'Ignorar pedidos pendentes',
+              },
+              hide: true
+            }
           }
         }
       },

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/ecomplus/application-starter/compare/v1.1.1...v1.1.2) (2022-11-29)
+
+
+### Bug Fixes
+
+* fix admin settings json schema :grimacing: ([57060a8](https://github.com/ecomplus/application-starter/commit/57060a8f7272eaffe25fe16250dac45c6c38d64e))
+
 ### [1.1.1](https://github.com/ecomplus/application-starter/compare/v1.1.0...v1.1.1) (2022-11-29)
 
 

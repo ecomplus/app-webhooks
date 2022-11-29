@@ -37,10 +37,12 @@ exports.post = ({ appSdk }, req, res) => {
       if (resource === 'orders' && trigger.action !== 'delete') {
         const resourceId = trigger.resource_id || trigger.inserted_id
         if (resourceId) {
+          const urls = []
           const webhooksPromises = []
           const addWebhook = (options) => {
             const url = options && options.webhook_uri
-            if (url) {
+            if (url && !urls.includes(url)) {
+              urls.push(url)
               console.log(`Trigger for Store #${storeId} ${resourceId} => ${url}`)
               webhooksPromises.push(
                 appSdk.apiRequest(storeId, `${resource}/${resourceId}.json`).then(async ({ response }) => {

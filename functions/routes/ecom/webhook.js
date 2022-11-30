@@ -37,8 +37,11 @@ exports.post = ({ appSdk }, req, res) => {
       let orderId, manualQueue
       const updateManualQueue = () => {
         if (manualQueue) {
-          appSdk.apiApp(storeId, 'data', 'PATCH', { manual_queue: manualQueue })
-            .catch(console.error)
+          setTimeout(() => {
+            appSdk.apiApp(storeId, 'data', 'PATCH', { manual_queue: manualQueue })
+              .catch(console.error)
+          }, 1000)
+          manualQueue = null
         }
       }
       if (resource === 'applications') {
@@ -90,10 +93,13 @@ exports.post = ({ appSdk }, req, res) => {
                   }
                 })
               })
-              .then(({ status }) => console.log(`> ${status}`))
+              .then(({ status }) => {
+                updateManualQueue()
+                console.log(`> ${status}`)
+              })
               .catch(error => {
                 if (error.response && error.config) {
-                  const err = new Error(`#${storeId} ${orderId} POST to ${url} failed`)
+                  const err = new Error(`#${storeId} ${orderId} POST to ${error.config.url} failed`)
                   const { status, data } = error.response
                   err.response = {
                     status,
@@ -113,7 +119,6 @@ exports.post = ({ appSdk }, req, res) => {
         }
         addWebhook(appData)
         return Promise.all(webhooksPromises).then(() => {
-          updateManualQueue()
           if (!res.headersSent) {
             return res.sendStatus(200)
           }

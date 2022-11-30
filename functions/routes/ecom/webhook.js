@@ -37,9 +37,9 @@ exports.post = ({ appSdk }, req, res) => {
       let orderId, manualQueue
       const updateManualQueue = () => {
         if (manualQueue) {
+          const data = { manual_queue: manualQueue }
           setTimeout(() => {
-            appSdk.apiApp(storeId, 'data', 'PATCH', { manual_queue: manualQueue })
-              .catch(console.error)
+            appSdk.apiApp(storeId, 'data', 'PATCH', data).catch(console.error)
           }, 1000)
           manualQueue = null
         }

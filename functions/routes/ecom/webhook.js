@@ -42,8 +42,9 @@ exports.post = ({ appSdk }, req, res) => {
         }
       }
       if (resource === 'applications') {
-        if (trigger.body && Array.isArray(trigger.body.manual_queue)) {
-          manualQueue = trigger.body.manual_queue
+        const { body } = trigger
+        if (body && Array.isArray(body.manual_queue) && body.manual_queue.length) {
+          manualQueue = body.manual_queue
           const nextId = manualQueue[0]
           if (typeof nextId === 'string' && /[a-f0-9]{24}/.test(nextId)) {
             orderId = nextId.trim()

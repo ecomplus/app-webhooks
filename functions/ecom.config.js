@@ -171,6 +171,25 @@ const app = {
       },
       hide: true
     },
+    manual_queue: {
+      schema: {
+        title: 'Fila manual de disparos',
+        type: 'array',
+        maxItems: 3000,
+        items: {
+          title: 'Pedido a enviar',
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            type: 'string',
+            maxLength: 255,
+            format: 'uri',
+            title: 'ID do pedido'
+          }
+        }
+      },
+      hide: false
+    }
   }
 }
 

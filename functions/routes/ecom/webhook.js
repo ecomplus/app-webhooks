@@ -34,73 +34,91 @@ exports.post = ({ appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       const { resource } = trigger
-      if (resource === 'orders' && trigger.action !== 'delete') {
-        const resourceId = trigger.resource_id || trigger.inserted_id
-        if (resourceId) {
-          const urls = []
-          const webhooksPromises = []
-          const addWebhook = (options) => {
-            const url = options && options.webhook_uri
-            if (url && !urls.includes(url)) {
-              urls.push(url)
-              console.log(`Trigger for Store #${storeId} ${resourceId} => ${url}`)
-              webhooksPromises.push(
-                appSdk.apiRequest(storeId, `${resource}/${resourceId}.json`).then(async ({ response }) => {
-                  const order = response.data
-                  if (
-                    options.skip_pending === true &&
-                    (!order.financial_status || order.financial_status.current === 'pending')
-                  ) {
-                    return res.sendStatus(204)
-                  }
-                  console.log(`> Sending ${resource} notification`)
-                  const token = options.webhook_token
-                  let headers
-                  if (token) {
-                    headers = {
-                      'Authorization': `Bearer ${token}`
-                    }
-                  }
-                  return axios({
-                    method: 'post',
-                    url,
-                    headers,
-                    data: {
-                      storeId,
-                      trigger,
-                      order,
-                    }
-                  })
-                })
-                .then(({ status }) => console.log(`> ${status}`))
-                .catch(error => {
-                  if (error.response && error.config) {
-                    const err = new Error(`#${storeId} ${resourceId} POST to ${url} failed`)
-                    const { status, data } = error.response
-                    err.response = {
-                      status,
-                      data: JSON.stringify(data)
-                    }
-                    err.data = JSON.stringify(error.config.data)
-                    return console.error(err)
-                  }
-                  console.error(error)
-                })
-              )
-            }
-          }
-          const { webhooks } = appData
-          if (Array.isArray(webhooks)) {
-            webhooks.forEach(addWebhook)
-          }
-          addWebhook(appData)
-          return Promise.all(webhooksPromises).then(() => {
-            if (!res.headersSent) {
-              return res.sendStatus(200)
-            }
-          })
+      let orderId, manualQueue
+      const updateManualQueue = () => {
+        if (manualQueue) {
+          appSdk.apiApp(storeId, 'data', 'PATCH', { manual_queue: manualQueue })
+            .catch(console.error)
         }
       }
+      if (resource === 'applications') {
+        if (trigger.body && Array.isArray(trigger.body.manual_queue)) {
+          manualQueue = trigger.body.manual_queue
+          const nextId = manualQueue[0]
+          if (typeof nextId === 'string' && /[a-f0-9]{24}/.test(nextId)) {
+            orderId = nextId.trim()
+          }
+          manualQueue.shift()
+        }
+      } else if (resource === 'orders' && trigger.action !== 'delete') {
+        orderId = trigger.resource_id || trigger.inserted_id
+      }
+      if (orderId) {
+        const urls = []
+        const webhooksPromises = []
+        const addWebhook = (options) => {
+          const url = options && options.webhook_uri
+          if (url && !urls.includes(url)) {
+            urls.push(url)
+            console.log(`Trigger for Store #${storeId} ${orderId} => ${url}`)
+            webhooksPromises.push(
+              appSdk.apiRequest(storeId, `${resource}/${orderId}.json`).then(async ({ response }) => {
+                const order = response.data
+                if (
+                  options.skip_pending === true &&
+                  (!order.financial_status || order.financial_status.current === 'pending')
+                ) {
+                  return res.sendStatus(204)
+                }
+                console.log(`> Sending ${resource} notification`)
+                const token = options.webhook_token
+                let headers
+                if (token) {
+                  headers = {
+                    'Authorization': `Bearer ${token}`
+                  }
+                }
+                return axios({
+                  method: 'post',
+                  url,
+                  headers,
+                  data: {
+                    storeId,
+                    trigger,
+                    order,
+                  }
+                })
+              })
+              .then(({ status }) => console.log(`> ${status}`))
+              .catch(error => {
+                if (error.response && error.config) {
+                  const err = new Error(`#${storeId} ${orderId} POST to ${url} failed`)
+                  const { status, data } = error.response
+                  err.response = {
+                    status,
+                    data: JSON.stringify(data)
+                  }
+                  err.data = JSON.stringify(error.config.data)
+                  return console.error(err)
+                }
+                console.error(error)
+              })
+            )
+          }
+        }
+        const { webhooks } = appData
+        if (Array.isArray(webhooks)) {
+          webhooks.forEach(addWebhook)
+        }
+        addWebhook(appData)
+        return Promise.all(webhooksPromises).then(() => {
+          updateManualQueue()
+          if (!res.headersSent) {
+            return res.sendStatus(200)
+          }
+        })
+      }
+      updateManualQueue()
       res.sendStatus(204)
     })
 

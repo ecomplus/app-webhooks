@@ -66,7 +66,7 @@ exports.post = ({ appSdk }, req, res) => {
             urls.push(url)
             console.log(`Trigger for Store #${storeId} ${orderId} => ${url}`)
             webhooksPromises.push(
-              appSdk.apiRequest(storeId, `${resource}/${orderId}.json`).then(async ({ response }) => {
+              appSdk.apiRequest(storeId, `orders/${orderId}.json`).then(async ({ response }) => {
                 const order = response.data
                 if (
                   options.skip_pending === true &&

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/ecomplus/application-starter/compare/v1.1.3...v2.0.0) (2022-11-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* new procedure needed
+
+### Features
+
+* supporting manual queue webhooks configured on app data ([5781bd3](https://github.com/ecomplus/application-starter/commit/5781bd3d541b058ccd5ebbb8ccdfa6bce4d4ad34))
+
 ### [1.1.3](https://github.com/ecomplus/application-starter/compare/v1.1.2...v1.1.3) (2022-11-29)
 
 ### [1.1.2](https://github.com/ecomplus/application-starter/compare/v1.1.1...v1.1.2) (2022-11-29)

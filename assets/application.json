@@ -60,6 +60,11 @@
               "type": "boolean",
               "default": false,
               "title": "Ignorar pedidos pendentes"
+            },
+            "send_carts": {
+              "type": "boolean",
+              "default": false,
+              "title": "Enviar carrinhos abandonados"
             }
           }
         }
@@ -87,5 +92,5 @@
     }
   },
   "auth_callback_uri": "https://us-central1-ecom-webhooks.cloudfunctions.net/app/ecom/auth-callback",
-  "version": "2.0.0"
+  "version": "3.0.0"
 }

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/ecomplus/application-starter/compare/v2.0.0...v3.0.0) (2022-12-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* added carts to app procedures
+
+### Features
+
+* optionally handle also carts webhooks ([2c123b8](https://github.com/ecomplus/application-starter/commit/2c123b81ca9f06859c26eb16f0215f73ae543242))
+
+
+### Bug Fixes
+
+* delay to update manual queue (on success only) ([c5a79cb](https://github.com/ecomplus/application-starter/commit/c5a79cb33a1952850ba0b21e615d0f32a01bf973))
+* peroperly fetching order document on manual queue ([cb129b7](https://github.com/ecomplus/application-starter/commit/cb129b74de3be6688cf1b6430b78dd08e893a705))
+* prevent app data webhooks loop ([0ce0169](https://github.com/ecomplus/application-starter/commit/0ce016990229bf174914c7d0755d764854e8dfcb))
+* properly updating manual queue array ([f82dcb5](https://github.com/ecomplus/application-starter/commit/f82dcb5f60ba25ff87fbc7fdd4d551dd8c86c1d1))
+
 ## [2.0.0](https://github.com/ecomplus/application-starter/compare/v1.1.3...v2.0.0) (2022-11-30)
 
 

@@ -165,6 +165,11 @@ const app = {
               type: 'boolean',
               default: false,
               title: 'Ignorar pedidos pendentes'
+            },
+            send_carts: {
+              type: 'boolean',
+              default: false,
+              title: 'Enviar carrinhos abandonados'
             }
           }
         }
@@ -228,6 +233,12 @@ procedures.push({
       field: 'fulfillment_status',
     },
 
+    // Receive notifications when cart is created with customer:
+    {
+      resource: 'carts',
+      field: 'customers',
+    },
+
     /* Receive notifications when products/variations stock quantity changes:
     {
       resource: 'products',
@@ -237,12 +248,6 @@ procedures.push({
       resource: 'products',
       subresource: 'variations',
       field: 'quantity'
-    },
-
-    // Receive notifications when cart is edited:
-    {
-      resource: 'carts',
-      action: 'change',
     },
 
     // Receive notifications when customer is deleted:

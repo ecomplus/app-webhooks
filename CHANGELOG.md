@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/ecomplus/application-starter/compare/v3.0.0...v3.0.1) (2023-07-25)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major ([c2e0be3](https://github.com/ecomplus/application-starter/commit/c2e0be3d41f64a84d58e71fdfe0aa42fb16090c5))
+* **deps:** update dependency @google-cloud/firestore to ^6.6.1 ([5e27654](https://github.com/ecomplus/application-starter/commit/5e27654d75b8b6cb03f63768638e78efa2bd5f64))
+* fix manual queue schema on admin settings ([13d8097](https://github.com/ecomplus/application-starter/commit/13d8097d7c1ec59dacd834ae2b6c80821fce92dc))
+
 ## [3.0.0](https://github.com/ecomplus/application-starter/compare/v2.0.0...v3.0.0) (2022-12-07)
 
 

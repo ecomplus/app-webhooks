@@ -77,20 +77,15 @@
         "type": "array",
         "maxItems": 3000,
         "items": {
-          "title": "Pedido a enviar",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "type": "string",
-            "maxLength": 255,
-            "format": "uri",
-            "title": "ID do pedido"
-          }
+          "title": "ID do pedido",
+          "type": "string",
+          "minLength": 24,
+          "maxLength": 24
         }
       },
       "hide": false
     }
   },
   "auth_callback_uri": "https://us-central1-ecom-webhooks.cloudfunctions.net/app/ecom/auth-callback",
-  "version": "3.0.0"
+  "version": "3.0.1"
 }

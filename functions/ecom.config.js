@@ -182,15 +182,10 @@ const app = {
         type: 'array',
         maxItems: 3000,
         items: {
-          title: 'Pedido a enviar',
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            type: 'string',
-            maxLength: 255,
-            format: 'uri',
-            title: 'ID do pedido'
-          }
+          title: 'ID do pedido',
+          type: 'string',
+          minLength: 24,
+          maxLength: 24
         }
       },
       hide: false

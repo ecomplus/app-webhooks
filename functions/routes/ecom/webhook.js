@@ -59,6 +59,9 @@ exports.post = ({ appSdk }, req, res) => {
         isCart = resource === 'carts'
       }
       if (docId) {
+        if (isCart) {
+          console.log(`Trigger Cart From Store #${storeId} - ${docId}`)
+        }
         const docEndpoint = isCart ? `carts/${docId}.json` : `orders/${docId}.json`
         return appSdk.apiRequest(storeId, docEndpoint).then(async ({ response }) => {
           const doc = response.data
@@ -67,6 +70,7 @@ exports.post = ({ appSdk }, req, res) => {
             if (doc.completed || doc.available === false) {
               return res.sendStatus(204)
             }
+            console.log(`Trigger Cart From Store #${storeId} - ${docId} - ${(Date.now() - new Date(doc.created_at).getTime())}`)
             const abandonedCartDelay = 3 * 1000 * 60
             if (Date.now() - new Date(doc.created_at).getTime() >= abandonedCartDelay) {
               const customerId = doc.customers && doc.customers[0]

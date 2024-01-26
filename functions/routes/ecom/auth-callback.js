@@ -41,13 +41,6 @@ exports.post = ({ appSdk }, req, res) => {
               field: 'data'
             })
 
-            if (storeId == 4566) {
-              procedures[0].triggers.push({
-                resource: 'orders',
-                action: 'change'
-              })
-            }
-
             // must save procedures once only
             return appSdk.saveProcedures(storeId, procedures, auth)
               .then(() => docRef.set({ setted_up: true }, { merge: true }))

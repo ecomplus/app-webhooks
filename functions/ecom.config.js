@@ -161,6 +161,12 @@ const app = {
               title: 'Token',
               description: 'Bearer token opcional para o cabeçalho Authorization'
             },
+            webhook_prop_token: {
+              type: 'string',
+              maxLength: 50,
+              title: 'Parâmetro no header',
+              description: 'Caso preenchido, será considerado esse parâmetro com token como valor e sem bearer token'
+            },
             skip_pending: {
               type: 'boolean',
               default: false,

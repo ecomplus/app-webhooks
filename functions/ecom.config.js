@@ -195,6 +195,40 @@ const app = {
         }
       },
       hide: false
+    },
+    map_prop: {
+      schema: {
+        title: 'Mapeamento de propriedades enviadas',
+        type: 'array',
+        maxItems: 90,
+        items: {
+          title: 'Relacionar informações enviada com propriedades de cada recurso',
+          description: 'Escolha qual informação será enviada no POST do webhook',
+          type: 'object',
+          properties: {
+            ecom_resource: {
+              type: 'string',
+              enum: [
+                'Carrinho', 
+                'Cliente',
+                'Pedido'
+              ],
+              title: 'Tipo de Informação a ser enviada'
+            },
+            prop: {
+              type: 'string',
+              title: 'Nome da propriedade',
+              description: 'O nome da propriedade deve ser exatamente igual ao que mostra na documentação http://developers.e-com.plus/docs/api/#/store'
+            },
+            only: {
+              type: 'boolean',
+              title: 'Apenas as propriedades informadas aqui?',
+              description: 'Caso ativo, será enviado apenas a propriedade informada neste bloco, caso contrário, será adicional'
+            }
+          }
+        }
+      },
+      hide: false
     }
   }
 }

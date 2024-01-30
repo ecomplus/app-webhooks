@@ -138,9 +138,6 @@ exports.post = ({ appSdk }, req, res) => {
               }
               const mappingProperties = []
               let onlyProps = false
-              if (storeId == 4566) {
-                console.log('JSON app', JSON.stringify(headers))
-              }
               const mapPropRules = options.map_prop || appData.map_prop || []
               if (mapPropRules && Array.isArray(mapPropRules) && mapPropRules.length) {
                 mapPropRules.forEach(rule => {
@@ -197,10 +194,6 @@ exports.post = ({ appSdk }, req, res) => {
                     body[key] = doc[prop]
                   }
                 })
-              }
-
-              if (storeId == 4566) {
-                console.log('Before send body', JSON.stringify(body))
               }
 
               webhooksPromises.push(

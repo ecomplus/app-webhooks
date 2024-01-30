@@ -145,7 +145,8 @@ exports.post = ({ appSdk }, req, res) => {
                     if (rule.only) {
                       onlyProps = rule.only
                       mappingProperties.push({
-                        prop: rule.prop
+                        prop: rule.prop,
+                        newProp: rule.new_prop
                       })
                     } else {
                       mappingProperties.push({
@@ -165,18 +166,32 @@ exports.post = ({ appSdk }, req, res) => {
               }
               if (onlyProps && mappingProperties.length) {
                 body = {}
-                mappingProperties.forEach(({prop}) => {
-                  body[prop] = doc[prop]
+                mappingProperties.forEach(({prop, newProp}) => {
+                  const key = newProp 
+                    ? newProp 
+                    : prop
+                  body[key] = doc[prop]
                 }) 
               } else if (!onlyProps && mappingProperties.length) {
-                mappingProperties.forEach(({prop, value, condition}) => {
+                mappingProperties.forEach(({prop, newProp, value, condition}) => {
                   if (prop === 'all') {
                     body = {}
                     body[isCart ? 'cart' : isCustomer ? 'customer' : 'order'] = doc
                   } else if (prop && condition) {
-                    body[prop] = condition === trigger.action
+                    const key = newProp 
+                      ? newProp 
+                      : prop
+                    body[key] = condition === trigger.action
                   } else if (prop && value && !condition) {
-                    body[prop] = value
+                    const key = newProp 
+                      ? newProp 
+                      : prop
+                    body[key] = value
+                  } else if (prop && newProp) {
+                    const key = newProp 
+                      ? newProp 
+                      : prop
+                    body[key] = doc[prop]
                   }
                 })
               }

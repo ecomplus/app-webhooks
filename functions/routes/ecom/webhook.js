@@ -140,7 +140,7 @@ exports.post = ({ appSdk }, req, res) => {
               const mappingProperties = []
               let onlyProps = false
               if (storeId == 4566) {
-                console.log('JSON app', JSON.stringify(options))
+                console.log('JSON app', JSON.stringify(headers))
               }
               if (options.map_prop && Array.isArray(options.map_prop) && options.map_prop.length) {
                 options.map_prop.forEach(rule => {
@@ -230,6 +230,9 @@ exports.post = ({ appSdk }, req, res) => {
             }
           }
           const { webhooks } = appData
+          if (storeId == 4566) {
+            console.log('JSON app outside', JSON.stringify(appData))
+          }
           if (Array.isArray(webhooks)) {
             webhooks.forEach(addWebhook)
           }

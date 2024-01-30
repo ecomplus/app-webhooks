@@ -122,6 +122,11 @@
               "title": "Nome da propriedade",
               "description": "O nome da propriedade deve ser exatamente igual ao que mostra na documentação http://developers.e-com.plus/docs/api/#/store"
             },
+            "new_prop": {
+              "type": "string",
+              "title": "Nome da nova propriedade",
+              "description": "Será o nome da nova propriedade. Exemplo: Você precisa enviar no body o email com propriedade email, logo no nome da propriedade será main_email e neste campo email"
+            },
             "value": {
               "type": "string",
               "title": "Valor da propriedade inserida"

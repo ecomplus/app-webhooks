@@ -214,12 +214,10 @@ const app = {
             ecom_resource: {
               type: 'string',
               enum: [
-                '--',
                 'Carrinho', 
                 'Cliente',
                 'Pedido'
               ],
-              default: '--',
               title: 'Tipo de Informação a ser enviada'
             },
             prop: {
@@ -239,12 +237,10 @@ const app = {
             ecom_status: {
               type: 'string',
               enum: [
-                '--',
                 'criar', 
                 'editar',
                 'deletar'
               ],
-              default: '--',
               title: 'Mostrar como valor para a propriedade, condicionado a um dos eventos',
               description: 'Exemplo: prop é criar_pedido, recurso é pedido, apenas propriedades desativado, caso seja marcado criar nesta opção, quando o pedido de fato for criado, além das propriedades anteriores, será inserido criar_pedido: true'
             },

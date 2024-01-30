@@ -8,6 +8,34 @@ const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
+const parseResource = (resource) => {
+  switch (resource) {
+    case 'Carrinho':
+      return 'carts'
+      break;
+    case 'Cliente':
+      return 'customers'
+      break;
+    case 'Pedido':
+      return 'orders'
+      break;
+  }
+}
+
+const parseAction = (action) => {
+  switch (resource) {
+    case 'criar':
+      return 'create'
+      break;
+    case 'editar':
+      return 'change'
+      break;
+    case 'deletar':
+      return 'delete'
+      break;
+  }
+} 
+
 exports.post = ({ appSdk }, req, res) => {
   // receiving notification from Store API
   const { storeId } = req
@@ -34,7 +62,7 @@ exports.post = ({ appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       const { resource } = trigger
-      let docId, manualQueue, isCart
+      let docId, manualQueue, isCart, isCustomer
       const updateManualQueue = () => {
         if (manualQueue) {
           const data = { manual_queue: manualQueue }
@@ -57,9 +85,14 @@ exports.post = ({ appSdk }, req, res) => {
       } else if (trigger.action !== 'delete') {
         docId = trigger.resource_id || trigger.inserted_id
         isCart = resource === 'carts'
+        isCustomer = resource === 'customers'
       }
       if (docId) {
-        const docEndpoint = isCart ? `carts/${docId}.json` : `orders/${docId}.json`
+        const docEndpoint = isCart 
+          ? `carts/${docId}.json` 
+          : isCustomer 
+            ? `customers/${docId}.json`
+            : `orders/${docId}.json`
         return appSdk.apiRequest(storeId, docEndpoint).then(async ({ response }) => {
           const doc = response.data
           let customer
@@ -82,7 +115,7 @@ exports.post = ({ appSdk }, req, res) => {
           const webhooksPromises = []
           const addWebhook = (options) => {
             const url = options && options.webhook_uri
-            if (url && !urls.includes(url) && (!isCart || options.send_carts)) {
+            if (url && !urls.includes(url) && ((!isCart || options.send_carts) && (!isCustomer || options.send_customers))) {
               urls.push(url)
               console.log(`Trigger for Store #${storeId} ${docEndpoint} => ${url}`)
               if (
@@ -93,23 +126,67 @@ exports.post = ({ appSdk }, req, res) => {
               }
               console.log(`> Sending ${resource} notification`)
               const token = options.webhook_token
+              const headerProp = options.webhook_prop_token
               let headers
-              if (token) {
+              if (token && !headerProp) {
                 headers = {
                   'Authorization': `Bearer ${token}`
                 }
+              } else if (token && headerProp) {
+                headers = {
+                  headerProp: token
+                }
               }
+              const mappingProperties = []
+              let onlyProps = false
+              if (options.map_prop && Array.isArray(options.map_prop) && options.map_prop.length) {
+                options.map_prop.forEach(rule => {
+                  if (resource === parseResource(rule.ecom_resource)) {
+                    if (rule.only) {
+                      onlyProps = rule.only
+                      mappingProperties.push({
+                        prop: rule.prop
+                      })
+                    } else {
+                      mappingProperties.push({
+                        prop: rule.prop,
+                        value: rule.value,
+                        condition: parseAction(rule.ecom_status)
+                      })
+                    }
+                  }
+                })
+              }
+              let body = {
+                storeId,
+                trigger,
+                [isCart ? 'cart' : isCustomer ? 'customer' : 'order']: doc,
+                customer,
+              }
+              if (onlyProps && mappingProperties.length) {
+                body = {}
+                mappingProperties.forEach(({prop}) => {
+                  body[prop] = doc[prop]
+                }) 
+              } else if (!onlyProps && mappingProperties.length) {
+                mappingProperties.forEach(({prop, value, condition}) => {
+                  if (prop === 'all') {
+                    body = {}
+                    body[isCart ? 'cart' : isCustomer ? 'customer' : 'order'] = doc
+                  } else if (prop && condition) {
+                    body[prop] = condition === trigger.action
+                  } else if (prop && value && !condition) {
+                    body[prop] = value
+                  }
+                })
+              }
+
               webhooksPromises.push(
                 axios({
                   method: 'post',
                   url,
                   headers,
-                  data: {
-                    storeId,
-                    trigger,
-                    [isCart ? 'cart' : 'order']: doc,
-                    customer,
-                  }
+                  data: body
                 })
                 .then(({ status }) => {
                   updateManualQueue()

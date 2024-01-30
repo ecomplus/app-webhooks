@@ -176,6 +176,11 @@ const app = {
               type: 'boolean',
               default: false,
               title: 'Enviar carrinhos abandonados'
+            },
+            send_customers: {
+              type: 'boolean',
+              default: false,
+              title: 'Enviar clientes criados'
             }
           }
         }
@@ -209,10 +214,12 @@ const app = {
             ecom_resource: {
               type: 'string',
               enum: [
+                '--',
                 'Carrinho', 
                 'Cliente',
                 'Pedido'
               ],
+              default: '--',
               title: 'Tipo de Informação a ser enviada'
             },
             prop: {
@@ -220,9 +227,26 @@ const app = {
               title: 'Nome da propriedade',
               description: 'O nome da propriedade deve ser exatamente igual ao que mostra na documentação http://developers.e-com.plus/docs/api/#/store'
             },
+            value: {
+              type: 'string',
+              title: 'Valor da propriedade inserida'
+            },
+            ecom_status: {
+              type: 'string',
+              enum: [
+                '--',
+                'criar', 
+                'editar',
+                'deletar'
+              ],
+              default: '--',
+              title: 'Mostrar como valor para a propriedade, condicionado a um dos eventos',
+              description: 'Exemplo: prop é criar_pedido, recurso é pedido, apenas propriedades desativado, caso seja marcado criar nesta opção, quando o pedido de fato for criado, além das propriedades anteriores, será inserido criar_pedido: true'
+            },
             only: {
               type: 'boolean',
               title: 'Apenas as propriedades informadas aqui?',
+              default: false,
               description: 'Caso ativo, será enviado apenas a propriedade informada neste bloco, caso contrário, será adicional'
             }
           }
@@ -274,6 +298,12 @@ procedures.push({
       field: 'customers',
     },
 
+    // Receive notifications when customer is created:
+    {
+      resource: 'customers',
+      action: 'create',
+    },
+
     /* Receive notifications when products/variations stock quantity changes:
     {
       resource: 'products',
@@ -286,10 +316,7 @@ procedures.push({
     },
 
     // Receive notifications when customer is deleted:
-    {
-      resource: 'customers',
-      action: 'delete',
-    },
+    
 
     // Feel free to create custom combinations with any Store API resource, subresource, action and field.
     */

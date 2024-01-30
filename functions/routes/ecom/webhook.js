@@ -139,8 +139,14 @@ exports.post = ({ appSdk }, req, res) => {
               }
               const mappingProperties = []
               let onlyProps = false
+              if (storeId == 4566) {
+                console.log('JSON app', JSON.stringify(options))
+              }
               if (options.map_prop && Array.isArray(options.map_prop) && options.map_prop.length) {
                 options.map_prop.forEach(rule => {
+                  if (storeId == 4566) {
+                    console.log('JSON rule', JSON.stringify(rule))
+                  }
                   if (resource === parseResource(rule.ecom_resource)) {
                     if (rule.only) {
                       onlyProps = rule.only

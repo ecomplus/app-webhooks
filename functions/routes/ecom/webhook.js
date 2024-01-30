@@ -133,17 +133,17 @@ exports.post = ({ appSdk }, req, res) => {
                   'Authorization': `Bearer ${token}`
                 }
               } else if (token && headerProp) {
-                headers = {
-                  headerProp: token
-                }
+                headers = {}
+                headers[headerProp] = token
               }
               const mappingProperties = []
               let onlyProps = false
               if (storeId == 4566) {
                 console.log('JSON app', JSON.stringify(headers))
               }
-              if (options.map_prop && Array.isArray(options.map_prop) && options.map_prop.length) {
-                options.map_prop.forEach(rule => {
+              const mapPropRules = options.map_prop || appData.map_prop || []
+              if (mapPropRules && Array.isArray(mapPropRules) && mapPropRules.length) {
+                mapPropRules.forEach(rule => {
                   if (storeId == 4566) {
                     console.log('JSON rule', JSON.stringify(rule))
                   }
@@ -230,9 +230,6 @@ exports.post = ({ appSdk }, req, res) => {
             }
           }
           const { webhooks } = appData
-          if (storeId == 4566) {
-            console.log('JSON app outside', JSON.stringify(appData))
-          }
           if (Array.isArray(webhooks)) {
             webhooks.forEach(addWebhook)
           }

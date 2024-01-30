@@ -23,7 +23,7 @@ const parseResource = (resource) => {
 }
 
 const parseAction = (action) => {
-  switch (resource) {
+  switch (action) {
     case 'criar':
       return 'create'
       break;

@@ -177,6 +177,11 @@ const app = {
               default: false,
               title: 'Enviar carrinhos abandonados'
             },
+            send_only_carts: {
+              type: 'boolean',
+              default: false,
+              title: 'Enviar apenas carrinhos abandonados'
+            },
             send_customers: {
               type: 'boolean',
               default: false,

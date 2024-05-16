@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { firestore } = require('firebase-admin')
 
 // read configured E-Com Plus app data
 const getAppData = require('./../../lib/store-api/get-app-data')
@@ -100,15 +101,32 @@ exports.post = ({ appSdk }, req, res) => {
             if (doc.completed || doc.available === false) {
               return res.sendStatus(204)
             }
-            const abandonedCartDelay = 1000 * 5
-            if (Date.now() - new Date(doc.created_at).getTime() >= abandonedCartDelay) {
-              const customerId = doc.customers && doc.customers[0]
-              if (customerId) {
-                const { response } = await appSdk.apiRequest(storeId, `customers/${customerId}.json`)
-                customer = response.data
-              }
-            } else {
-              return res.sendStatus(501)
+            const cartWebhook = appData.webhooks.find(({send_only_carts}) => send_only_carts)
+
+            const abandonedCartDelay = 20 * 1000 * 60
+            const customerId = doc.customers && doc.customers[0]
+            if (customerId) {
+              const { response } = await appSdk.apiRequest(storeId, `customers/${customerId}.json`)
+              customer = response.data
+            }
+            if (!(Date.now() - new Date(doc.created_at).getTime() >= abandonedCartDelay) && cartWebhook && cartWebhook.webhook_uri) {
+              const documentRef = firestore().doc(`cart_to_add/${doc._id}`)
+              const msDate = new Date(doc.created_at).getTime() + abandonedCartDelay
+              await documentRef.set({
+                data: {
+                  storeId,
+                  trigger,
+                  [resource.slice(0, -1)]: doc,
+                  customer
+                },
+                url: cartWebhook.webhook_uri,
+                storeId,
+                sendAt: firestore.Timestamp.fromDate(new Date(msDate))
+              })
+              return res.send({
+                status: 400,
+                text: 'Waiting to send'
+              })
             }
           }
           const urls = []
